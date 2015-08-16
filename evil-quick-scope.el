@@ -1,11 +1,8 @@
 ;; TODO: Abort if before-cursor or after-cursor are too short.
-;; TODO: Do forward highlighting too.
-;; TODO: Create proper faces.
 ;;
 ;; TODO: Make global minor mode so that it can be turned off and on.
 ;;       - Remember, should only be on in evil mode's normal and visual states.
 ;;
-;; TODO: Require ov library.
 ;; TODO: Comment header (with the dependencies line).
 ;;
 ;; TODO: Readme: What, Installation, Screenshots?, Roadmap.
@@ -19,19 +16,29 @@
 
 (require 'ov)
 
+(defvar evil-qs-last-post-command-position 0
+  "Holds the cursor position from the last run of post-command-hooks.")
+
+(make-variable-buffer-local 'evil-qs-last-post-command-position)
+
+(defface evil-qs-forward-primary
+  '((t (:foreground "#f4bf75")))
+  "Highlights primary matches after the cursor."
+  :group 'basic-faces)
+
+(defface evil-qs-forward-secondary
+  '((t (:foreground "#8f5536")))
+  "Highlights secondary matches after the cursor."
+  :group 'basic-faces)
+
 (defface evil-qs-backward-primary
-  '((((class color) (min-colors 88) (background light))
-     :background "darkseagreen2")
-    (((class color) (min-colors 88) (background dark))
-     :background "darkolivegreen")
-    (((class color) (min-colors 16) (background light))
-     :background "darkseagreen2")
-    (((class color) (min-colors 16) (background dark))
-     :background "darkolivegreen")
-    (((class color) (min-colors 8))
-     :background "green" :foreground "black")
-    (t :inverse-video t))
-  "Highlighting face used by evil-quick-scope."
+  '((t (:foreground "#f4bf75")))
+  "Highlights primary matches before the cursor."
+  :group 'basic-faces)
+
+(defface evil-qs-backward-secondary
+  '((t (:foreground "#8f5536")))
+  "Highlights secondary matches before the cursor."
   :group 'basic-faces)
 
 (defun evil-qs-highlight-forward-primary (positions)
@@ -68,7 +75,6 @@
 
           (occurrences)
 
-          ;; TODO: Abort highlight if line is not long enough.
           (current-line (thing-at-point 'line))
           (beg (point-at-bol))
           (end (point-at-eol))
@@ -87,6 +93,67 @@
 
             before-cursor-string (substring current-line 0 cursor)
             after-cursor-string (substring current-line cursor (- end beg)))
+
+      (let ((pos cursor)
+            (accepted)
+
+            (first-word t)
+            (second-word t)
+
+            (found-pri-char nil)
+            (found-sec-char nil)
+
+            (pri-chars-to-hl '())
+            (sec-chars-to-hl '())
+            (pri-to-hl)
+            (sec-to-hl)
+
+            (after-cursor (split-string after-cursor-string word-seps-reg)))
+
+        (dolist (word after-cursor)
+          (setq found-pri-char nil
+                found-sec-char nil)
+
+          (dolist (char (append word nil))
+            (setq char (string char)
+                  accepted (cdr (assoc char occurrences)))
+
+            (unless (eq accepted nil)
+              (add-to-list 'occurrences `(,char . ,(+ 1 accepted)))
+
+              (unless (or (eq found-pri-char t) (eq found-sec-char t))
+                (unless (eq second-word t)
+                  (if (eq 0 accepted)
+                      (progn
+                        (setq pri-to-hl (+ beg pos)
+                              found-pri-char t))
+
+                    (if (eq 1 accepted)
+                        (progn
+                          (setq sec-to-hl (+ beg pos)
+                                found-sec-char t)))))))
+
+            (setq pos (+ pos 1)))
+
+          (if (eq found-pri-char t)
+              (setq pri-chars-to-hl (append pri-chars-to-hl (list pri-to-hl)))
+
+            (if (eq found-sec-char t)
+                (setq sec-chars-to-hl (append sec-chars-to-hl (list sec-to-hl)))))
+
+          (if (eq first-word t)
+              (setq first-word nil)
+
+            (if (eq second-word t)
+                (setq second-word nil)))
+
+          (setq pos (+ pos 1)))
+
+        (evil-qs-highlight-forward-primary pri-chars-to-hl)
+        (evil-qs-highlight-forward-secondary sec-chars-to-hl))
+
+      ;; Reset occurrences because now we are counting in a different direction.
+      (setq occurrences accepted-chars)
 
       (let ((pos cursor)
             (accepted)
@@ -144,137 +211,17 @@
         (evil-qs-highlight-backward-primary pri-chars-to-hl)
         (evil-qs-highlight-backward-secondary sec-chars-to-hl))
 
-      ;; Reset occurrences because now we are counting in a different direction.
-      (setq occurrences accepted-chars)
-
-      (let ((pos cursor)
-            (accepted)
-
-            (first-word t)
-            (second-word t)
-
-            (found-pri-char nil)
-            (found-sec-char nil)
-
-            (pri-chars-to-hl '())
-            (sec-chars-to-hl '())
-            (pri-to-hl)
-            (sec-to-hl)
-
-            (after-cursor (split-string after-cursor-string word-seps-reg)))
-
-        (dolist (word after-cursor)
-          (setq found-pri-char nil
-                found-sec-char nil)
-
-          (catch 'break
-            (dolist (char (append word nil))
-              (setq pos (+ pos 1)
-                    char (string char)
-                    accepted (cdr (assoc char occurrences)))
-
-              (unless (eq accepted nil)
-                (add-to-list 'occurrences `(,char . ,(+ 1 accepted)))
-
-                (unless (eq second-word t)
-                  (if (eq 0 accepted)
-                      (progn
-                        (setq pri-to-hl (+ beg pos)
-                              found-pri-char t)
-                        (throw 'break nil))
-
-                    (if (eq 1 accepted)
-                        (progn
-                          (setq sec-to-hl (+ beg pos)
-                                found-sec-char t)
-                          (throw 'break nil))))))))
-
-          (if (eq found-pri-char t)
-              (setq pri-chars-to-hl (append pri-chars-to-hl (list pri-to-hl)))
-
-            (if (eq found-sec-char t)
-                (setq sec-chars-to-hl (append sec-chars-to-hl (list sec-to-hl)))))
-
-          (if (eq first-word t)
-              (setq first-word nil)
-
-            (if (eq second-word t)
-                (setq second-word nil)))
-
-          (setq pos (+ pos 1)))
-
-        (evil-qs-highlight-forward-primary pri-chars-to-hl)
-        (evil-qs-highlight-forward-secondary sec-chars-to-hl))
-
       nil)))
 
-(defun evil-qs-show-line ()
-  (let ((current-line (thing-at-point 'line))
-        (current-line-list))
-
-    (setq current-line-list (split-string current-line "[-_ \f\t\n\r\v]+"))
-    (dolist (word current-line-list)
-      (message "%s" word))
-    (message "%d" (length current-line-list))
-    nil))
-
-(defun evil-qs-test-inner ()
-  (message "%d" example-variable))
-
-(defun evil-qs-test ()
-  (let ((example-variable 5))
-    (evil-qs-test-inner)))
-
-(message "%s" (evil-qs-highlight-current-line))
-(append '(1 3) (list 5))
-(string 101)
-
-(setq my-assoc-list '(("a" . 1)
-                      ("b" . 2))
-      my-key "a")
-
-(add-to-list 'my-assoc-list `(,my-key . 7))
-(cdr (assoc my-key my-assoc-list))
-
-(split-string "  hello--world foo_bar" "[-_ \f\t\n\r\v]")
-(message "%d" (point))
-
-(ov (+ (point-at-bol) 5) (+ (point-at-bol) 6) 'face 'evil-qs-hl 'evil-qs-hl-1 t)
-(ov (+ (point-at-bol) 7) (+ (point-at-bol) 8) 'face 'evil-qs-hl 'evil-qs-hl-1 t)
-(ov (+ (point-at-bol) 7) (+ (point-at-bol) 8) 'face 'evil-qs-hl 'evil-qs-hl-2 t)
-
-(defvar evil-qs-last-post-command-position 0
-  "Holds the cursor position from the last run of post-command-hooks.")
-
-(make-variable-buffer-local 'evil-qs-last-post-command-position)
-
-;; TODO: Refresh only if cursor moved to a new word.
 (defun evil-qs-refresh-if-moved-post-command ()
   (unless (equal (point) evil-qs-last-post-command-position)
-    (ov-clear 'evil-qs-hl-1))
+    (ov-clear 'evil-qs-fwd-pri)
+    (ov-clear 'evil-qs-fwd-sec)
+    (ov-clear 'evil-qs-bwd-pri)
+    (ov-clear 'evil-qs-bwd-sec)
+    (evil-qs-highlight))
+
   (setq evil-qs-last-post-command-position (point)))
 
 (add-hook 'post-command-hook #'evil-qs-refresh-if-moved-post-command nil t)
 (remove-hook 'post-command-hook #'evil-qs-refresh-if-moved-post-command t)
-
-
-;; (ov (+ (point-at-bol) 5) (+ (point-at-bol) 6) 'face '(:background "#00ff00") 'ov1 t)
-
-;; (ov 5 17 'face 'warning)
-;; (ov-clear)
-;; (message (thing-at-point 'line))
-;; (ov (point-min) (point) 'face '(:background "#00ff00"))
-
-;; (message "%d" (+ (point-at-bol) 4))
-
-;; (defun evil-qs-refresh ()
-;;   (ov-clear 'ov1))
-
-;; (add-hook 'evil-motion-state-exit-hook 'evil-qs-refresh)
-;; (ov-clear 'ov1)
-;; (ov-clear)
-
-;; (defadvice evil-backward-char (after evil-qs-refresh)
-;;   (ov-clear))
-
-;; (advice-add 'evil-backward-char :after #'ov-clear)
