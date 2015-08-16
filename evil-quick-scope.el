@@ -1,4 +1,4 @@
-(defface evil-qs-hl
+(defface evil-qs-backward-primary
   '((((class color) (min-colors 88) (background light))
      :background "darkseagreen2")
     (((class color) (min-colors 88) (background dark))
@@ -12,6 +12,10 @@
     (t :inverse-video t))
   "Highlighting face used by evil-quick-scope."
   :group 'basic-faces)
+
+(defun evil-qs-highlight-positions (positions)
+  (dolist (pos positions)
+    (ov pos (+ 1 pos ) 'face 'evil-qs-backward-primary 'evil-qs-bwd-pri t)))
 
 (defun evil-qs-highlight-current-line ()
   (unless (< (length (split-string (thing-at-point 'line) "[-_ \f\t\n\r\v]+")) 4)
@@ -29,7 +33,7 @@
                             ("l" . 0) ("y" . 0) ("L" . 0) ("Y" . 0)
                             ("m" . 0) ("z" . 0) ("M" . 0) ("Z" . 0)))
 
-          ;; TOOD: Abort highlight if line is not long enough.
+          ;; TODO: Abort highlight if line is not long enough.
           (current-line (thing-at-point 'line))
           (beg (point-at-bol))
           (end (point-at-eol))
@@ -59,6 +63,7 @@
       (let ((pos cursor)
             (accepted)
             (first-word t)
+            (second-word t)
             (found-pri-char nil)
             (found-sec-char nil))
 
@@ -74,15 +79,16 @@
             (unless (eq accepted nil)
               (add-to-list 'accepted-chars `(,char . ,(+ 1 accepted)))
 
-              (if (eq 0 accepted)
-                  (progn
-                    (setq pri-to-hl (+ beg pos)
-                          found-pri-char t))
-
-                (if (eq 1 accepted)
+              (unless (eq second-word t)
+                (if (eq 0 accepted)
                     (progn
-                      (setq sec-to-hl (+ beg pos)
-                            found-sec-char t))))))
+                      (setq pri-to-hl (+ beg pos)
+                            found-pri-char t))
+
+                  (if (eq 1 accepted)
+                      (progn
+                        (setq sec-to-hl (+ beg pos)
+                              found-sec-char t)))))))
 
           (if (eq found-pri-char t)
               (setq pri-chars-to-hl (append pri-chars-to-hl (list pri-to-hl))))
@@ -90,11 +96,19 @@
           (if (eq found-sec-char t)
               (setq sec-chars-to-hl (append sec-chars-to-hl (list sec-to-hl))))
 
+          (if (eq first-word t)
+              (setq first-word nil)
+
+            (if (eq second-word t)
+                (setq second-word nil)))
+
           (setq pos (- pos 1))))
 
       ;; (dolist (pos pri-chars-to-hl)
 
-      pri-chars-to-hl)))
+      (evil-qs-highlight-positions pri-chars-to-hl)
+
+      nil)))
 
 (defun evil-qs-show-line ()
   (let ((current-line (thing-at-point 'line))
