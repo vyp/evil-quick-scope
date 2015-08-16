@@ -8,10 +8,14 @@
 ;; TODO: Require ov library.
 ;; TODO: Comment header (with the dependencies line).
 ;;
-;; TODO: Readme: What, Installation, Roadmap.
+;; TODO: Readme: What, Installation, Screenshots?, Roadmap.
 ;;       - Roadmap:
 ;;         - Highlight all visible lines if `evil-cross-lines` is true.
 ;;         - Option to only turn on highlighting after pressing `fFtT;,`.
+;;
+;; TODO: Instead of just checking for the number of words, check for the number
+;; of words *with accepted characters in them*, to determine when to start
+;; highlighting on the line.
 
 (defface evil-qs-backward-primary
   '((((class color) (min-colors 88) (background light))
@@ -28,11 +32,11 @@
   "Highlighting face used by evil-quick-scope."
   :group 'basic-faces)
 
-(defun evil-qs-highlight-positions (positions)
+(defun evil-qs-highlight-backward-primary (positions)
   (dolist (pos positions)
     (ov pos (+ 1 pos ) 'face 'evil-qs-backward-primary 'evil-qs-bwd-pri t)))
 
-(defun evil-qs-highlight-current-line ()
+(defun evil-qs-highlight ()
   (unless (< (length (split-string (thing-at-point 'line) "[-_ \f\t\n\r\v]+")) 4)
     (let ((accepted-chars '(("a" . 0) ("n" . 0) ("A" . 0) ("N" . 0) ("0" . 0)
                             ("b" . 0) ("o" . 0) ("B" . 0) ("O" . 0) ("1" . 0)
@@ -48,6 +52,8 @@
                             ("l" . 0) ("y" . 0) ("L" . 0) ("Y" . 0)
                             ("m" . 0) ("z" . 0) ("M" . 0) ("Z" . 0)))
 
+          (occurrences)
+
           ;; TODO: Abort highlight if line is not long enough.
           (current-line (thing-at-point 'line))
           (beg (point-at-bol))
@@ -59,28 +65,30 @@
           (after-cursor)
           (before-cursor)
 
-          (word-seps-reg "[-_ \f\t\n\r\v]")
+          (word-seps-reg "[-_ \f\t\n\r\v]"))
+          ;; (word-seps-reg-greedy "[-_ \f\t\n\r\v]+"))
 
-          (pri-chars-to-hl '())
-          (sec-chars-to-hl '())
-          (pri-to-hl)
-          (sec-to-hl))
-
-      (setq cursor (- (point) beg)
+      (setq occurrences accepted-chars
+            cursor (- (point) beg)
 
             before-cursor-string (substring current-line 0 cursor)
-            after-cursor-string (substring current-line cursor (- end beg))
-
-            before-cursor (split-string before-cursor-string word-seps-reg)
-            after-cursor (split-string after-cursor-string word-seps-reg))
-
+            after-cursor-string (substring current-line cursor (- end beg)))
 
       (let ((pos cursor)
             (accepted)
+
             (first-word t)
             (second-word t)
+
             (found-pri-char nil)
-            (found-sec-char nil))
+            (found-sec-char nil)
+
+            (pri-chars-to-hl '())
+            (sec-chars-to-hl '())
+            (pri-to-hl)
+            (sec-to-hl)
+
+            (before-cursor (split-string before-cursor-string word-seps-reg)))
 
         (dolist (word (reverse before-cursor))
           (setq found-pri-char nil
@@ -89,10 +97,68 @@
           (dolist (char (reverse (append word nil)))
             (setq pos (- pos 1)
                   char (string char)
-                  accepted (cdr (assoc char accepted-chars)))
+                  accepted (cdr (assoc char occurrences)))
 
             (unless (eq accepted nil)
-              (add-to-list 'accepted-chars `(,char . ,(+ 1 accepted)))
+              (add-to-list 'occurrences `(,char . ,(+ 1 accepted)))
+
+              (unless (eq second-word t)
+                (if (eq 0 accepted)
+                    (progn
+                      (setq pri-to-hl (+ beg pos)
+                            found-pri-char t))
+
+                  (if (eq 1 accepted)
+                      (progn
+                        (setq sec-to-hl (+ beg pos)
+                              found-sec-char t)))))))
+
+          (if (eq found-pri-char t)
+              (setq pri-chars-to-hl (append pri-chars-to-hl (list pri-to-hl)))
+
+            (if (eq found-sec-char t)
+                (setq sec-chars-to-hl (append sec-chars-to-hl (list sec-to-hl)))))
+
+          (if (eq first-word t)
+              (setq first-word nil)
+
+            (if (eq second-word t)
+                (setq second-word nil)))
+
+          (setq pos (- pos 1)))
+
+        (evil-qs-highlight-backward-primary pri-chars-to-hl))
+
+      ;; Reset occurrences because now we are counting in a different direction.
+      (setq occurrences accepted-chars)
+
+      (let ((pos cursor)
+            (accepted)
+
+            (first-word t)
+            (second-word t)
+
+            (found-pri-char nil)
+            (found-sec-char nil)
+
+            (pri-chars-to-hl '())
+            (sec-chars-to-hl '())
+            (pri-to-hl)
+            (sec-to-hl)
+
+            (after-cursor (split-string after-cursor-string word-seps-reg)))
+
+        (dolist (word after-cursor)
+          (setq found-pri-char nil
+                found-sec-char nil)
+
+          (dolist (char (append word nil))
+            (setq pos (+ pos 1)
+                  char (string char)
+                  accepted (cdr (assoc char occurrences)))
+
+            (unless (eq accepted nil)
+              (add-to-list 'occurrences `(,char . ,(+ 1 accepted)))
 
               (unless (eq second-word t)
                 (if (eq 0 accepted)
@@ -117,11 +183,9 @@
             (if (eq second-word t)
                 (setq second-word nil)))
 
-          (setq pos (- pos 1))))
+          (setq pos (- pos 1)))
 
-      ;; (dolist (pos pri-chars-to-hl)
-
-      (evil-qs-highlight-positions pri-chars-to-hl)
+        (evil-qs-highlight-backward-primary pri-chars-to-hl))
 
       nil)))
 
@@ -134,6 +198,13 @@
       (message "%s" word))
     (message "%d" (length current-line-list))
     nil))
+
+(defun evil-qs-test-inner ()
+  (message "%d" example-variable))
+
+(defun evil-qs-test ()
+  (let ((example-variable 5))
+    (evil-qs-test-inner)))
 
 (message "%s" (evil-qs-highlight-current-line))
 (append '(1 3) (list 5))
