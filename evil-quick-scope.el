@@ -17,6 +17,8 @@
 ;; of words *with accepted characters in them*, to determine when to start
 ;; highlighting on the line.
 
+(require 'ov)
+
 (defface evil-qs-backward-primary
   '((((class color) (min-colors 88) (background light))
      :background "darkseagreen2")
@@ -32,9 +34,21 @@
   "Highlighting face used by evil-quick-scope."
   :group 'basic-faces)
 
+(defun evil-qs-highlight-forward-primary (positions)
+  (dolist (pos positions)
+    (ov pos (+ 1 pos ) 'face 'evil-qs-forward-primary 'evil-qs-fwd-pri t)))
+
+(defun evil-qs-highlight-forward-secondary (positions)
+  (dolist (pos positions)
+    (ov pos (+ 1 pos ) 'face 'evil-qs-forward-secondary 'evil-qs-fwd-sec t)))
+
 (defun evil-qs-highlight-backward-primary (positions)
   (dolist (pos positions)
     (ov pos (+ 1 pos ) 'face 'evil-qs-backward-primary 'evil-qs-bwd-pri t)))
+
+(defun evil-qs-highlight-backward-secondary (positions)
+  (dolist (pos positions)
+    (ov pos (+ 1 pos ) 'face 'evil-qs-backward-secondary 'evil-qs-bwd-sec t)))
 
 (defun evil-qs-highlight ()
   (unless (< (length (split-string (thing-at-point 'line) "[-_ \f\t\n\r\v]+")) 4)
@@ -127,7 +141,8 @@
 
           (setq pos (- pos 1)))
 
-        (evil-qs-highlight-backward-primary pri-chars-to-hl))
+        (evil-qs-highlight-backward-primary pri-chars-to-hl)
+        (evil-qs-highlight-backward-secondary sec-chars-to-hl))
 
       ;; Reset occurrences because now we are counting in a different direction.
       (setq occurrences accepted-chars)
@@ -186,9 +201,10 @@
             (if (eq second-word t)
                 (setq second-word nil)))
 
-          (setq pos (- pos 1)))
+          (setq pos (+ pos 1)))
 
-        (evil-qs-highlight-backward-primary pri-chars-to-hl))
+        (evil-qs-highlight-forward-primary pri-chars-to-hl)
+        (evil-qs-highlight-forward-secondary sec-chars-to-hl))
 
       nil)))
 
