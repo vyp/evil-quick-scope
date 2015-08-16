@@ -152,30 +152,33 @@
           (setq found-pri-char nil
                 found-sec-char nil)
 
-          (dolist (char (append word nil))
-            (setq pos (+ pos 1)
-                  char (string char)
-                  accepted (cdr (assoc char occurrences)))
+          (catch 'break
+            (dolist (char (append word nil))
+              (setq pos (+ pos 1)
+                    char (string char)
+                    accepted (cdr (assoc char occurrences)))
 
-            (unless (eq accepted nil)
-              (add-to-list 'occurrences `(,char . ,(+ 1 accepted)))
+              (unless (eq accepted nil)
+                (add-to-list 'occurrences `(,char . ,(+ 1 accepted)))
 
-              (unless (eq second-word t)
-                (if (eq 0 accepted)
-                    (progn
-                      (setq pri-to-hl (+ beg pos)
-                            found-pri-char t))
-
-                  (if (eq 1 accepted)
+                (unless (eq second-word t)
+                  (if (eq 0 accepted)
                       (progn
-                        (setq sec-to-hl (+ beg pos)
-                              found-sec-char t)))))))
+                        (setq pri-to-hl (+ beg pos)
+                              found-pri-char t)
+                        (throw 'break nil))
+
+                    (if (eq 1 accepted)
+                        (progn
+                          (setq sec-to-hl (+ beg pos)
+                                found-sec-char t)
+                          (throw 'break nil))))))))
 
           (if (eq found-pri-char t)
-              (setq pri-chars-to-hl (append pri-chars-to-hl (list pri-to-hl))))
+              (setq pri-chars-to-hl (append pri-chars-to-hl (list pri-to-hl)))
 
-          (if (eq found-sec-char t)
-              (setq sec-chars-to-hl (append sec-chars-to-hl (list sec-to-hl))))
+            (if (eq found-sec-char t)
+                (setq sec-chars-to-hl (append sec-chars-to-hl (list sec-to-hl)))))
 
           (if (eq first-word t)
               (setq first-word nil)
