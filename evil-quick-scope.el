@@ -97,7 +97,6 @@
 
             before-cursor-string (substring current-line 0 cursor)
             after-cursor-string (substring current-line cursor (- end beg)))
-            ;; after-cursor-string (substring (substring current-line cursor (- end beg)) 1))
 
       (let ((pos cursor)
             (accepted)

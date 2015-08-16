@@ -1,4 +1,21 @@
-# Evil Quick Scope
+# [WIP] Evil Quick Scope
+
+**Work in progress**: Please note that the code in this repository cannot be
+installed normally as an emacs package yet, because the work has not yet been
+finished for even the initial release.
+
+With that said though, the majority of the work has been completed. The only
+things left to do are:
+
+1. Disable highlighting when in evil-replace-state.
+
+2. Figure out how to make this into a minor mode, and hence a proper installable
+   emacs package.
+
+I am however busy for the next few days, but I should be able to complete the
+above soon after that.
+
+---
 
 Emacs package that attempts to emulate [Brian Le's] [1] [quick-scope] [2] vim
 plugin for [Evil mode] [3].
