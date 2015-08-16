@@ -1,3 +1,18 @@
+;; TODO: Abort if before-cursor or after-cursor are too short.
+;; TODO: Do forward highlighting too.
+;; TODO: Create proper faces.
+;;
+;; TODO: Make global minor mode so that it can be turned off and on.
+;;       - Remember, should only be on in evil mode's normal and visual states.
+;;
+;; TODO: Require ov library.
+;; TODO: Comment header (with the dependencies line).
+;;
+;; TODO: Readme: What, Installation, Roadmap.
+;;       - Roadmap:
+;;         - Highlight all visible lines if `evil-cross-lines` is true.
+;;         - Option to only turn on highlighting after pressing `fFtT;,`.
+
 (defface evil-qs-backward-primary
   '((((class color) (min-colors 88) (background light))
      :background "darkseagreen2")
