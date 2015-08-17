@@ -1,6 +1,6 @@
 ;;; evil-quick-scope.el --- Lightning fast f/F/t/T movement for Evil mode.
 ;;
-;; Copying GPLv3+
+;; Copying: GPLv3+
 ;;
 ;; Author: <https://github.com/vyp> <elisp.vim@gmail.com> @xd1le
 ;; Version: 0.1.0
