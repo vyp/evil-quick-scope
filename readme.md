@@ -5,9 +5,6 @@ plugin for [Evil mode] [3]. All credit for this brilliant idea goes to him.
 
 ## Introduction
 
-*You should have already clicked on Brian's original vim plugin link, but
-nevertheless, to be complete...*
-
 Find yourself repeatedly but cautiously pressing `;`/`,` often to get to where
 you want? Quick scope for Evil mode highlights the characters you can reach via
 `f`/`F` with two or three keystrokes, at most once per word.
