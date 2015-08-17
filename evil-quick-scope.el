@@ -17,6 +17,7 @@
 ;; highlighting on the line.
 
 (require 'ov)
+(require 'evil)
 
 (defvar evil-qs-last-post-command-position 0
   "Holds the cursor position from the last run of post-command-hooks.")
@@ -233,29 +234,30 @@
   nil " QSC" nil
 
   (if evil-quick-scope-mode
-      (progn
-        (let ((orig-state evil-state))
-          (unless (or (eq orig-state 'insert) (eq orig-state 'replace) (eq orig-state 'emacs))
-            (evil-qs-start)))
+      (ignore-errors
+        (progn
+          (let ((orig-state evil-state))
+            (unless (or (eq orig-state 'insert) (eq orig-state 'replace) (eq orig-state 'emacs))
+              (evil-qs-start)))
 
-        (add-hook 'evil-insert-state-entry-hook #'evil-qs-stop nil t)
+          (add-hook 'evil-insert-state-entry-hook #'evil-qs-stop nil t)
 
-        ;; In case cursor does not actually change position.
-        ;;
-        ;; For example, if user enters insert state at the beginning of a line, and
-        ;; exits it at the same place, the cursor does not move one position back as
-        ;; usual (even if `evil-cross-lines` is set to true).
-        (add-hook 'evil-insert-state-exit-hook #'evil-qs-highlight nil t)
+          ;; In case cursor does not actually change position.
+          ;;
+          ;; For example, if user enters insert state at the beginning of a line, and
+          ;; exits it at the same place, the cursor does not move one position back as
+          ;; usual (even if `evil-cross-lines` is set to true).
+          (add-hook 'evil-insert-state-exit-hook #'evil-qs-highlight nil t)
 
-        (add-hook 'evil-insert-state-exit-hook #'evil-qs-start nil t)
+          (add-hook 'evil-insert-state-exit-hook #'evil-qs-start nil t)
 
-        (add-hook 'evil-replace-state-entry-hook #'evil-qs-stop nil t)
-        (add-hook 'evil-replace-state-exit-hook #'evil-qs-highlight nil t)
-        (add-hook 'evil-replace-state-exit-hook #'evil-qs-start nil t)
+          (add-hook 'evil-replace-state-entry-hook #'evil-qs-stop nil t)
+          (add-hook 'evil-replace-state-exit-hook #'evil-qs-highlight nil t)
+          (add-hook 'evil-replace-state-exit-hook #'evil-qs-start nil t)
 
-        (add-hook 'evil-emacs-state-entry-hook #'evil-qs-stop nil t)
-        (add-hook 'evil-emacs-state-exit-hook #'evil-qs-highlight nil t)
-        (add-hook 'evil-emacs-state-exit-hook #'evil-qs-start nil t))
+          (add-hook 'evil-emacs-state-entry-hook #'evil-qs-stop nil t)
+          (add-hook 'evil-emacs-state-exit-hook #'evil-qs-highlight nil t)
+          (add-hook 'evil-emacs-state-exit-hook #'evil-qs-start nil t)))
 
     (remove-hook 'evil-insert-state-entry-hook #'evil-qs-stop t)
     (remove-hook 'evil-insert-state-exit-hook #'evil-qs-highlight t)
