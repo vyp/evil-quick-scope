@@ -1,6 +1,15 @@
-;; TODO: Abort highlighting if before-cursor/after-cursor is too short.
+;;; evil-quick-scope.el --- Lightning fast f/F/t/T movement for Evil mode.
 ;;
-;; TODO: Comment header (with the "Package-Requires:" dependencies line).
+;; License: GPLv3+
+;;
+;; Author: <https://github.com/vyp> <elisp.vim@gmail.com> @xd1le
+;; Version: 0.1.0
+;; Created: 15th August 2015
+;; URL: https://github.com/vyp/evil-quick-scope
+;; Package-Requires: ((ov "1.0.6"))
+;;;
+
+;; TODO: Abort highlighting if before-cursor/after-cursor is too short.
 ;;
 ;; TODO: Readme: What, Installation, Screenshots?, Roadmap.
 ;;
