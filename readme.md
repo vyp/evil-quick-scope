@@ -193,7 +193,7 @@ this program in a file named `license` at the root directory. If not, see
 
 [1]: https://plus.google.com/102336503306134343850
 [2]: https://github.com/unblevable/quick-scope
-[3]: https://bitbucket.org/lyro/evil/wiki/Home
+[3]: https://bitbucket.org/lyro/evil
 [4]: https://github.com/quelpa/quelpa
 [5]: https://github.com/dimitri/el-get
 [6]: https://bitbucket.org/lyro/evil
