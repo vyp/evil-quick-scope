@@ -34,7 +34,7 @@ call them.
 
 ## Installation
 
-### [Quelpa] [4] (Recommended)
+### [Quelpa] [4] (recommended)
 
 ``` elisp
 (quelpa
@@ -140,11 +140,16 @@ highlighting:
 3. `evil-qs-backward-primary`
 4. `evil-qs-backward-secondary`
 
+
 - "**Primary**" refers to characters that can be reached in **two** keystrokes
   just by pressing `f`/`F` and then the character.
 
+  - By default these faces are given the "green" foreground color.
+
 - "**Secondary**" refers to characters that require additionally pressing a
   semicolon (`;`) to be reached, hence requiring **three** keystrokes.
+
+  - By default these faces are given the "blue" foreground color.
 
 - "Forward" refers to characters highlighted *after* the cursor, i.e. navigated
   via `f`.
