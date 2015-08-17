@@ -1,3 +1,6 @@
+;; TODO: No need to also ignore the second word away from the cursor as
+;; initially thought.
+;;
 ;; TODO: Abort highlighting if before-cursor/after-cursor is too short.
 ;;
 ;; TODO: Make global minor mode so that it can be turned off and on.
@@ -10,7 +13,13 @@
 ;;       - Roadmap:
 ;;
 ;;         - Highlight all visible lines if `evil-cross-lines` is true.
+;;
 ;;         - Option to only turn on highlighting after pressing `fFtT;,`.
+;;
+;;         - Option to disable highlighting long lines.
+;;
+;;         - Option to have a different face for the current line in case of
+;;           using hl-line mode.
 ;;
 ;;       - Also remember to mention the current version of ov being used.
 ;;
@@ -26,24 +35,20 @@
 (make-variable-buffer-local 'evil-qs-last-post-command-position)
 
 (defface evil-qs-forward-primary
-  '((t (:foreground "#f4bf75")))
-  "Highlights primary matches after the cursor."
-  :group 'basic-faces)
+  '((t (:foreground "#c3744a")))
+  "Highlights primary matches after the cursor.")
 
 (defface evil-qs-forward-secondary
-  '((t (:foreground "#d28445")))
-  "Highlights secondary matches after the cursor."
-  :group 'basic-faces)
+  '((t (:foreground "#a96540")))
+  "Highlights secondary matches after the cursor.")
 
 (defface evil-qs-backward-primary
-  '((t (:foreground "#f4bf75")))
-  "Highlights primary matches before the cursor."
-  :group 'basic-faces)
+  '((t (:foreground "#c3744a")))
+  "Highlights primary matches before the cursor.")
 
 (defface evil-qs-backward-secondary
-  '((t (:foreground "#d28445")))
-  "Highlights secondary matches before the cursor."
-  :group 'basic-faces)
+  '((t (:foreground "#a96540")))
+  "Highlights secondary matches before the cursor.")
 
 (defun evil-qs-highlight-forward-primary (positions)
   (dolist (pos positions)
