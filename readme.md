@@ -1,7 +1,7 @@
 # Evil Quick Scope
 
 Emacs minor mode that attempts to emulate [Brian Le's] [1] [quick-scope] [2] vim
-plugin for [Evil mode] [3]. All credit for this brilliant idea goes to him.
+plugin for [Evil mode] [3]. All credit for this idea goes to him.
 
 ## Introduction
 
