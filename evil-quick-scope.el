@@ -1,8 +1,5 @@
 ;; TODO: Abort highlighting if before-cursor/after-cursor is too short.
 ;;
-;; TODO: Make global minor mode so that it can be turned off and on.
-;;       - Remember, should only be on in evil mode's normal and visual states.
-;;
 ;; TODO: Comment header (with the "Package-Requires:" dependencies line).
 ;;
 ;; TODO: Readme: What, Installation, Screenshots?, Roadmap.
@@ -36,36 +33,36 @@
 (make-variable-buffer-local 'evil-qs-last-post-command-position)
 
 (defface evil-qs-forward-primary
-  '((t (:foreground "#c3744a")))
+  '((t (:foreground "green")))
   "Highlights primary matches after the cursor.")
 
 (defface evil-qs-forward-secondary
-  '((t (:foreground "#a96540")))
+  '((t (:foreground "blue")))
   "Highlights secondary matches after the cursor.")
 
 (defface evil-qs-backward-primary
-  '((t (:foreground "#c3744a")))
+  '((t (:foreground "green")))
   "Highlights primary matches before the cursor.")
 
 (defface evil-qs-backward-secondary
-  '((t (:foreground "#a96540")))
+  '((t (:foreground "blue")))
   "Highlights secondary matches before the cursor.")
 
 (defun evil-qs-highlight-forward-primary (positions)
   (dolist (pos positions)
-    (ov pos (+ 1 pos ) 'face 'evil-qs-forward-primary 'evil-qs-fwd-pri t)))
+    (ov pos (+ 1 pos) 'face 'evil-qs-forward-primary 'evil-qs-fwd-pri t)))
 
 (defun evil-qs-highlight-forward-secondary (positions)
   (dolist (pos positions)
-    (ov pos (+ 1 pos ) 'face 'evil-qs-forward-secondary 'evil-qs-fwd-sec t)))
+    (ov pos (+ 1 pos) 'face 'evil-qs-forward-secondary 'evil-qs-fwd-sec t)))
 
 (defun evil-qs-highlight-backward-primary (positions)
   (dolist (pos positions)
-    (ov pos (+ 1 pos ) 'face 'evil-qs-backward-primary 'evil-qs-bwd-pri t)))
+    (ov pos (+ 1 pos) 'face 'evil-qs-backward-primary 'evil-qs-bwd-pri t)))
 
 (defun evil-qs-highlight-backward-secondary (positions)
   (dolist (pos positions)
-    (ov pos (+ 1 pos ) 'face 'evil-qs-backward-secondary 'evil-qs-bwd-sec t)))
+    (ov pos (+ 1 pos) 'face 'evil-qs-backward-secondary 'evil-qs-bwd-sec t)))
 
 (defun evil-qs-highlight ()
   (unless (< (length (split-string (thing-at-point 'line) "[-_ \f\t\n\r\v]+")) 4)
@@ -238,25 +235,51 @@
   (evil-qs-clear)
   (remove-hook 'post-command-hook #'evil-qs-refresh-if-moved-post-command t))
 
-(let ((orig-state evil-state))
-  (unless (or (eq orig-state 'insert) (eq orig-state 'replace) (eq orig-state 'emacs))
-    (evil-qs-start)))
+;;;###autoload
+(define-minor-mode evil-quick-scope-mode
+  "Toggle evil-quick-scope-mode on or off."
 
-(add-hook 'evil-insert-state-entry-hook #'evil-qs-stop nil t)
+  nil " QSC" nil
 
-;; In case cursor does not actually change position.
-;;
-;; For example, if user enters insert state at the beginning of a line, and
-;; exits it at the same place, the cursor does not move one position back as
-;; usual (even if `evil-cross-lines` is set to true).
-(add-hook 'evil-insert-state-exit-hook #'evil-qs-highlight nil t)
+  (if evil-quick-scope-mode
+      (progn
+        (let ((orig-state evil-state))
+          (unless (or (eq orig-state 'insert) (eq orig-state 'replace) (eq orig-state 'emacs))
+            (evil-qs-start)))
 
-(add-hook 'evil-insert-state-exit-hook #'evil-qs-start nil t)
+        (add-hook 'evil-insert-state-entry-hook #'evil-qs-stop nil t)
 
-(add-hook 'evil-replace-state-entry-hook #'evil-qs-stop nil t)
-(add-hook 'evil-replace-state-exit-hook #'evil-qs-highlight nil t)
-(add-hook 'evil-replace-state-exit-hook #'evil-qs-start nil t)
+        ;; In case cursor does not actually change position.
+        ;;
+        ;; For example, if user enters insert state at the beginning of a line, and
+        ;; exits it at the same place, the cursor does not move one position back as
+        ;; usual (even if `evil-cross-lines` is set to true).
+        (add-hook 'evil-insert-state-exit-hook #'evil-qs-highlight nil t)
 
-(add-hook 'evil-emacs-state-entry-hook #'evil-qs-stop nil t)
-(add-hook 'evil-emacs-state-exit-hook #'evil-qs-highlight nil t)
-(add-hook 'evil-emacs-state-exit-hook #'evil-qs-start nil t)
+        (add-hook 'evil-insert-state-exit-hook #'evil-qs-start nil t)
+
+        (add-hook 'evil-replace-state-entry-hook #'evil-qs-stop nil t)
+        (add-hook 'evil-replace-state-exit-hook #'evil-qs-highlight nil t)
+        (add-hook 'evil-replace-state-exit-hook #'evil-qs-start nil t)
+
+        (add-hook 'evil-emacs-state-entry-hook #'evil-qs-stop nil t)
+        (add-hook 'evil-emacs-state-exit-hook #'evil-qs-highlight nil t)
+        (add-hook 'evil-emacs-state-exit-hook #'evil-qs-start nil t))
+
+    (remove-hook 'evil-insert-state-entry-hook #'evil-qs-stop t)
+    (remove-hook 'evil-insert-state-exit-hook #'evil-qs-highlight t)
+    (remove-hook 'evil-insert-state-exit-hook #'evil-qs-start t)
+
+    (remove-hook 'evil-replace-state-entry-hook #'evil-qs-stop t)
+    (remove-hook 'evil-replace-state-exit-hook #'evil-qs-highlight t)
+    (remove-hook 'evil-replace-state-exit-hook #'evil-qs-start t)
+
+    (remove-hook 'evil-emacs-state-entry-hook #'evil-qs-stop t)
+    (remove-hook 'evil-emacs-state-exit-hook #'evil-qs-highlight t)
+    (remove-hook 'evil-emacs-state-exit-hook #'evil-qs-start t)
+
+    (evil-qs-stop)))
+
+(provide 'evil-quick-scope)
+
+;;; evil-quick-scope.el ends here.

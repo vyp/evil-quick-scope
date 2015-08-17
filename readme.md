@@ -35,6 +35,6 @@ You should have received a copy of the GNU General Public License along with
 this program in a file named `license` at the root directory. If not, see
 <http://www.gnu.org/licenses/>.
 
-[1]: https://github.com/unblevable
+[1]: https://plus.google.com/102336503306134343850
 [2]: https://github.com/unblevable/quick-scope
 [3]: https://bitbucket.org/lyro/evil/wiki/Home
