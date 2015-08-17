@@ -1,6 +1,3 @@
-;; TODO: No need to also ignore the second word away from the cursor as
-;; initially thought.
-;;
 ;; TODO: Abort highlighting if before-cursor/after-cursor is too short.
 ;;
 ;; TODO: Make global minor mode so that it can be turned off and on.
@@ -107,7 +104,6 @@
             (accepted)
 
             (first-word t)
-            (second-word t)
             (first-char t)
 
             (found-pri-char nil)
@@ -133,7 +129,7 @@
                 (add-to-list 'occurrences `(,char . ,(+ 1 accepted)))
 
                 (unless (or (eq found-pri-char t) (eq found-sec-char t))
-                  (unless (eq second-word t)
+                  (unless (eq first-word t)
                     (if (eq 0 accepted)
                         (progn
                           (setq pri-to-hl (+ beg pos)
@@ -154,10 +150,7 @@
                 (setq sec-chars-to-hl (append sec-chars-to-hl (list sec-to-hl)))))
 
           (if (eq first-word t)
-              (setq first-word nil)
-
-            (if (eq second-word t)
-                (setq second-word nil)))
+              (setq first-word nil))
 
           (setq pos (+ pos 1)))
 
@@ -171,8 +164,6 @@
             (accepted)
 
             (first-word t)
-            (second-word t)
-
             (found-pri-char nil)
             (found-sec-char nil)
 
@@ -195,7 +186,7 @@
             (unless (eq accepted nil)
               (add-to-list 'occurrences `(,char . ,(+ 1 accepted)))
 
-              (unless (eq second-word t)
+              (unless (eq first-word t)
                 (if (eq 0 accepted)
                     (progn
                       (setq pri-to-hl (+ beg pos)
@@ -213,10 +204,7 @@
                 (setq sec-chars-to-hl (append sec-chars-to-hl (list sec-to-hl)))))
 
           (if (eq first-word t)
-              (setq first-word nil)
-
-            (if (eq second-word t)
-                (setq second-word nil)))
+              (setq first-word nil))
 
           (setq pos (- pos 1)))
 
