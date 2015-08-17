@@ -7,7 +7,7 @@ finished for even the initial release.
 With that said though, the majority of the work has been completed. The only
 things left to do are:
 
-1. Disable highlighting when in evil-replace-state.
+1. ~~Disable highlighting when in evil-replace-state.~~
 
 2. Figure out how to make this into a minor mode, and hence a proper installable
    emacs package.
