@@ -140,6 +140,7 @@ highlighting:
 3. `evil-qs-backward-primary`
 4. `evil-qs-backward-secondary`
 
+Should be self-explanatory with the following:
 
 - "**Primary**" refers to characters that can be reached in **two** keystrokes
   just by pressing `f`/`F` and then the character.
