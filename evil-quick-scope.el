@@ -1,38 +1,20 @@
 ;;; evil-quick-scope.el --- Lightning fast f/F/t/T movement for Evil mode.
 ;;
-;; License: GPLv3+
+;; Copying GPLv3+
 ;;
 ;; Author: <https://github.com/vyp> <elisp.vim@gmail.com> @xd1le
 ;; Version: 0.1.0
 ;; Created: 15th August 2015
+;; Keywords: highlight, character, evil, convenience
 ;; URL: https://github.com/vyp/evil-quick-scope
-;; Package-Requires: ((ov "1.0.6"))
+;; Package-Requires: ((evil "1.2.2") (ov "1.0.6"))
 ;;;
 
 ;; TODO: Abort highlighting if before-cursor/after-cursor is too short.
 ;;
-;; TODO: Readme: What, Installation, Screenshots?, Roadmap.
-;;
-;;       - Roadmap:
-;;
-;;         - Highlight all visible lines if `evil-cross-lines` is true.
-;;
-;;         - Option to only turn on highlighting after pressing `fFtT;,`.
-;;
-;;         - Option to disable highlighting long lines.
-;;
-;;         - Option to have a different face for the current line in case of
-;;           using hl-line mode.
-;;
-;;         - Option to select word separators?
-;;
-;;       - Also remember to mention the current version of ov being used.
-;;
 ;; TODO: Instead of just checking for the number of words, check for the number
 ;; of words *with accepted characters in them*, to determine when to start
 ;; highlighting on the line.
-;;
-;; TODO: Potentially add "/" to word separators list?
 
 (require 'ov)
 
