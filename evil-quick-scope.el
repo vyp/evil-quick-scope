@@ -2,7 +2,7 @@
 ;;
 ;; Copying: GPLv3+
 ;;
-;; Author: <https://github.com/vyp> <elisp.vim@gmail.com> @xd1le
+;; Author: <https://github.com/vyp> @xd1le
 ;; Version: 0.1.0
 ;; Created: 15th August 2015
 ;; Keywords: highlight, character, evil, convenience
@@ -10,6 +10,8 @@
 ;; Package-Requires: ((evil "1.2.2") (ov "1.0.6"))
 ;;;
 
+;; TODO: Do not highlight in Ex mode.
+;;
 ;; TODO: Abort highlighting if before-cursor/after-cursor is too short.
 ;;
 ;; TODO: Instead of just checking for the number of words, check for the number

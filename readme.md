@@ -159,8 +159,13 @@ Should be self-explanatory with the following:
 
 ### Planned
 
+- Add forward slash ("/") and period (".") to word separators list.
+
 - Option to only turn on highlighting after pressing `f`/`F`/`t`/`T`/`;`/`,`
   (and to turn off again with the next non-`f`/`F`/`t`/`T`/`;`/`,` movement).
+
+  - If this option is selected, pressing `;`/`,` should only highlight the
+    character that is currently being used by these commands.
 
 - Option to specify an alist to highlight faces at highlighting points according
   to the particular face at that point (instead of using the
@@ -174,7 +179,7 @@ Should be self-explanatory with the following:
 
 - Option to select word separators?
 
-- Add forward slash ("/") to word separators list?
+- Turn off in inactive buffers if possible?
 
 ## License
 
