@@ -48,8 +48,8 @@ call them.
 
 ### Manually
 
-1. Quick scope depends on [evil] [6] and [ov] [7]. Be sure that these packages
-   are installed first.
+1. Quick scope depends on evil and [ov] [6]. Be sure that these packages are
+   installed first.
 
    - Of course, quick scope does not *require* evil just to highlight
      characters, but it does use various evil hooks to determine *when* to
@@ -67,7 +67,7 @@ call them.
      because those tools should check the `Package-Requires:` metadata for you,
      and install them if necessary.
 
-2. Obtain the source code using [git] [8] or otherwise:
+2. Obtain the source code using [git] [7] or otherwise:
 
    ``` shell
    $ git clone https://github.com/vyp/evil-quick-scope
@@ -196,6 +196,5 @@ this program in a file named `license` at the root directory. If not, see
 [3]: https://bitbucket.org/lyro/evil
 [4]: https://github.com/quelpa/quelpa
 [5]: https://github.com/dimitri/el-get
-[6]: https://bitbucket.org/lyro/evil
-[7]: https://github.com/ShingoFukuyama/ov.el
-[8]: https://git-scm.com/
+[6]: https://github.com/ShingoFukuyama/ov.el
+[7]: https://git-scm.com/
