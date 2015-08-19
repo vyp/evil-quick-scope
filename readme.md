@@ -26,8 +26,13 @@ call them.
 - Quick scope attempts to highlight closest to the beginning of each word if
   possible.
 
-- In general, a "word" separator is defined as whitespace, or a hyphen ("-"), or
-  an underscore ("_").
+- A "word" separator is defined as any of the following characters:
+
+  - Whitespace.
+  - Hyphen ("-").
+  - Underscore ("_").
+  - Forward slash ("/").
+  - Period (".").
 
 ## Installation
 
@@ -158,8 +163,6 @@ Should be self-explanatory with the following:
 ## Roadmap
 
 ### Planned
-
-- Add forward slash ("/") and period (".") to word separators list.
 
 - Option to only turn on highlighting after pressing `f`/`F`/`t`/`T`/`;`/`,`
   (and to turn off again with the next non-`f`/`F`/`t`/`T`/`;`/`,` movement).

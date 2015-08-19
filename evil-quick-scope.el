@@ -26,21 +26,29 @@
 
 (make-variable-buffer-local 'evil-qs-last-post-command-position)
 
+(defgroup evil-quick-scope nil
+  "Customise evil-quick-scope."
+  :prefix "evil-qs")
+
 (defface evil-qs-forward-primary
   '((t (:foreground "green")))
-  "Highlights primary matches after the cursor.")
+  "Highlights primary matches after the cursor."
+  :group 'evil-quick-scope)
 
 (defface evil-qs-forward-secondary
   '((t (:foreground "blue")))
-  "Highlights secondary matches after the cursor.")
+  "Highlights secondary matches after the cursor."
+  :group 'evil-quick-scope)
 
 (defface evil-qs-backward-primary
   '((t (:foreground "green")))
-  "Highlights primary matches before the cursor.")
+  "Highlights primary matches before the cursor."
+  :group 'evil-quick-scope)
 
 (defface evil-qs-backward-secondary
   '((t (:foreground "blue")))
-  "Highlights secondary matches before the cursor.")
+  "Highlights secondary matches before the cursor."
+  :group 'evil-quick-scope)
 
 (defun evil-qs-highlight-forward-primary (positions)
   (dolist (pos positions)
@@ -59,7 +67,7 @@
     (ov pos (+ 1 pos) 'face 'evil-qs-backward-secondary 'evil-qs-bwd-sec t)))
 
 (defun evil-qs-highlight ()
-  (unless (< (length (split-string (thing-at-point 'line) "[-_ \f\t\n\r\v]+")) 3)
+  (unless (< (length (split-string (thing-at-point 'line) "[-_\/. \f\t\n\r\v]+")) 3)
     (let ((accepted-chars '(("a" . 0) ("n" . 0) ("A" . 0) ("N" . 0) ("0" . 0)
                             ("b" . 0) ("o" . 0) ("B" . 0) ("O" . 0) ("1" . 0)
                             ("c" . 0) ("p" . 0) ("C" . 0) ("P" . 0) ("2" . 0)
@@ -86,8 +94,8 @@
           (after-cursor)
           (before-cursor)
 
-          (word-seps-reg "[-_ \f\t\n\r\v]"))
-          ;; (word-seps-reg-greedy "[-_ \f\t\n\r\v]+"))
+          (word-seps-reg "[-_\/. \f\t\n\r\v]"))
+          ;; (word-seps-reg-greedy "[-_\/. \f\t\n\r\v]+"))
 
       (setq occurrences accepted-chars
             cursor (- (point) beg)
