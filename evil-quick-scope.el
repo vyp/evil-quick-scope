@@ -59,7 +59,7 @@
     (ov pos (+ 1 pos) 'face 'evil-qs-backward-secondary 'evil-qs-bwd-sec t)))
 
 (defun evil-qs-highlight ()
-  (unless (< (length (split-string (thing-at-point 'line) "[-_ \f\t\n\r\v]+")) 4)
+  (unless (< (length (split-string (thing-at-point 'line) "[-_ \f\t\n\r\v]+")) 3)
     (let ((accepted-chars '(("a" . 0) ("n" . 0) ("A" . 0) ("N" . 0) ("0" . 0)
                             ("b" . 0) ("o" . 0) ("B" . 0) ("O" . 0) ("1" . 0)
                             ("c" . 0) ("p" . 0) ("C" . 0) ("P" . 0) ("2" . 0)
