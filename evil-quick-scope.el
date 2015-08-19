@@ -83,6 +83,8 @@
                             ("m" . 0) ("z" . 0) ("M" . 0) ("Z" . 0)))
 
           (occurrences)
+          (current-char (following-char))
+          (current-char-accepted-p t)
 
           (current-line (thing-at-point 'line))
           (beg (point-at-bol))
@@ -103,11 +105,15 @@
             before-cursor-string (substring current-line 0 cursor)
             after-cursor-string (substring current-line cursor (- end beg)))
 
+      (unless (eq current-char 0)
+        (setq current-char-accepted-p
+              (cdr (assoc (string current-char) occurrences))))
+
       (let ((pos cursor)
             (accepted)
 
             (first-word t)
-            (first-char t)
+            (first-char (if current-char-accepted-p t nil))
 
             (found-pri-char nil)
             (found-sec-char nil)
@@ -143,7 +149,9 @@
                             (setq sec-to-hl (+ beg pos)
                                   found-sec-char t))))))))
 
-            (setq first-char nil)
+            (if (eq first-char t)
+                (setq first-char nil))
+
             (setq pos (+ pos 1)))
 
           (if (eq found-pri-char t)
@@ -166,7 +174,7 @@
       (let ((pos cursor)
             (accepted)
 
-            (first-word t)
+            (first-word (if current-char-accepted-p t nil))
             (found-pri-char nil)
             (found-sec-char nil)
 
