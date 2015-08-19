@@ -53,37 +53,13 @@ call them.
 
 ### Manually
 
-1. Quick scope depends on evil and [ov] [6]. Be sure that these packages are
-   installed first.
+Make sure that the dependencies evil and [ov] [6] are installed, and then in
+`.emacs` or `init.el`:
 
-   - Of course, quick scope does not *require* evil just to highlight
-     characters, but it does use various evil hooks to determine *when* to
-     highlight.
-
-     - And besides, why would you use quick scope without evil mode anyway?
-
-   - Installation of these packages will not be covered here. Please check their
-     respective installation instructions for that.
-
-   - If you need to, look for the `Package-Requires:` metadata header line in
-     the source code for the specific versions.
-
-   - These do not need to be handled separately if using quelpa or el-get,
-     because those tools should check the `Package-Requires:` metadata for you,
-     and install them if necessary.
-
-2. Obtain the source code using [git] [7] or otherwise:
-
-   ``` shell
-   $ git clone https://github.com/vyp/evil-quick-scope
-   ```
-
-3. In `.emacs` or `init.el`:
-
-   ``` elisp
-   (add-to-list 'load-path "~/path/to/evil-quick-scope/")
-   (load "evil-quick-scope")
-   ```
+``` elisp
+(add-to-list 'load-path "~/path/to/evil-quick-scope/")
+(load "evil-quick-scope")
+```
 
 ## Configuration
 
@@ -205,4 +181,3 @@ this program in a file named `license` at the root directory. If not, see
 [4]: https://github.com/quelpa/quelpa
 [5]: https://github.com/dimitri/el-get
 [6]: https://github.com/ShingoFukuyama/ov.el
-[7]: https://git-scm.com/
