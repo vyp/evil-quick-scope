@@ -10,8 +10,6 @@
 ;; Package-Requires: ((evil "1.2.2") (ov "1.0.6"))
 ;;;
 
-;; TODO: Do not highlight in Ex mode.
-;;
 ;; TODO: Abort highlighting if before-cursor/after-cursor is too short.
 ;;
 ;; TODO: Instead of just checking for the number of words, check for the number
@@ -255,7 +253,10 @@
   (if evil-quick-scope-mode
       (progn
         (let ((orig-state evil-state))
-          (unless (or (eq orig-state 'insert) (eq orig-state 'replace) (eq orig-state 'emacs))
+          (unless (or (eq orig-state 'insert)
+                      (eq orig-state 'replace)
+                      (eq orig-state 'emacs))
+
             (evil-qs-start)))
 
         (add-hook 'evil-insert-state-entry-hook #'evil-qs-stop nil t)
@@ -275,7 +276,8 @@
 
         (add-hook 'evil-emacs-state-entry-hook #'evil-qs-stop nil t)
         (add-hook 'evil-emacs-state-exit-hook #'evil-qs-highlight nil t)
-        (add-hook 'evil-emacs-state-exit-hook #'evil-qs-start nil t))
+        (add-hook 'evil-emacs-state-exit-hook #'evil-qs-start nil t)
+        (add-hook 'minibuffer-setup-hook (lambda () (evil-quick-scope-mode -1))))
 
     (remove-hook 'evil-insert-state-entry-hook #'evil-qs-stop t)
     (remove-hook 'evil-insert-state-exit-hook #'evil-qs-highlight t)
@@ -288,6 +290,8 @@
     (remove-hook 'evil-emacs-state-entry-hook #'evil-qs-stop t)
     (remove-hook 'evil-emacs-state-exit-hook #'evil-qs-highlight t)
     (remove-hook 'evil-emacs-state-exit-hook #'evil-qs-start t)
+
+    (remove-hook 'minibuffer-setup-hook (lambda () (evil-quick-scope-mode -1)))
 
     (evil-qs-stop)))
 

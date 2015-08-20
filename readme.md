@@ -67,7 +67,7 @@ Make sure that the dependencies evil and [ov] [6] are installed, and then in
 
 Because quick scope is a minor mode, you can just run the
 `evil-quick-scope-mode` command to toggle it on or off for the current
-buffer. Pass `t` to unconditionally turn on, or pass `nil` to unconditionally
+buffer. Pass `t` to unconditionally turn on, or pass `-1` to unconditionally
 turn off.
 
 Therefore, for example, to turn on quick scope for all text and programming
@@ -81,11 +81,11 @@ modes, simply add the appropriate hooks (in your `.emacs` or `init.el`):
 ```
 
 But now say you do not want it enabled in a particular text mode, say LaTeX
-mode, you can disable it specifically for LaTeX mode by passing `nil` as said
+mode, you can disable it specifically for LaTeX mode by passing `-1` as said
 above:
 
 ``` elisp
-(add-hook 'latex-mode-hook (lambda () (evil-quick-scope-mode nil)))
+(add-hook 'latex-mode-hook (lambda () (evil-quick-scope-mode -1)))
 ```
 
 ---
