@@ -1,7 +1,29 @@
+I've just found [another quick scope package] [1] for evil mode. It was created
+before this package, and it's much better written, and also has an extensive
+test suite, so you should definitely try that one out first.
+
+I wrote this because I wasn't aware of any others at the time I wrote it. It's
+possible blorbx's package was not public yet when I was searching if one already
+existed.
+
+For the time being, I will continue using and working on this package because
+there's a few features that are not in blorbx's version that I want. However,
+when/if these things come to blorbx's quick scope, I see no reason to continue
+this package and will deprecate it. So be cautious if you use this package, and
+keep checking back periodically, in case it has been deprecated.
+
+With regards to the function prefixes, blorbx's code seems to use
+`evil-quickscope` as a prefix throughout, whereas I use `evil-qs`, except I also
+call the mode `evil-quick-scope-mode` and the group for the faces
+`evil-quick-scope`. So there shouldn't be conflicts, but you should only be
+using one or the other anyway.
+
+---
+
 # Evil Quick Scope
 
-Emacs minor mode that attempts to emulate [Brian Le's] [1] [quick-scope] [2] vim
-plugin for [Evil mode] [3]. All credit for this idea goes to him.
+Emacs minor mode that attempts to emulate [Brian Le's] [2] [quick-scope] [3] vim
+plugin for [Evil mode] [4]. All credit for this idea goes to him.
 
 ## Introduction
 
@@ -36,7 +58,7 @@ call them.
 
 ## Installation
 
-### [Quelpa] [4] (recommended)
+### [Quelpa] [5] (recommended)
 
 ``` elisp
 (quelpa
@@ -45,7 +67,7 @@ call them.
    :repo "vyp/evil-quick-scope"))
 ```
 
-### [El-Get] [5]
+### [El-Get] [6]
 
 ``` elisp
 (el-get-bundle vyp/evil-quick-scope)
@@ -53,7 +75,7 @@ call them.
 
 ### Manually
 
-Make sure that the dependencies evil and [ov] [6] are installed, and then in
+Make sure that the dependencies evil and [ov] [7] are installed, and then in
 `.emacs` or `init.el`:
 
 ``` elisp
@@ -175,9 +197,10 @@ You should have received a copy of the GNU General Public License along with
 this program in a file named `license` at the root directory. If not, see
 <http://www.gnu.org/licenses/>.
 
-[1]: https://plus.google.com/102336503306134343850
-[2]: https://github.com/unblevable/quick-scope
-[3]: https://bitbucket.org/lyro/evil
-[4]: https://github.com/quelpa/quelpa
-[5]: https://github.com/dimitri/el-get
-[6]: https://github.com/ShingoFukuyama/ov.el
+[1]: https://github.com/blorbx/evil-quickscope
+[2]: https://plus.google.com/102336503306134343850
+[3]: https://github.com/unblevable/quick-scope
+[4]: https://bitbucket.org/lyro/evil
+[5]: https://github.com/quelpa/quelpa
+[6]: https://github.com/dimitri/el-get
+[7]: https://github.com/ShingoFukuyama/ov.el
