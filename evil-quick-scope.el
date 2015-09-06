@@ -29,27 +29,8 @@
 
 (defgroup evil-quick-scope nil
   "Customise evil-quick-scope."
-  :prefix "evil-qs")
-
-(defface evil-qs-forward-primary
-  '((t (:foreground "green")))
-  "Highlights primary matches after the cursor."
-  :group 'evil-quick-scope)
-
-(defface evil-qs-forward-secondary
-  '((t (:foreground "blue")))
-  "Highlights secondary matches after the cursor."
-  :group 'evil-quick-scope)
-
-(defface evil-qs-backward-primary
-  '((t (:foreground "green")))
-  "Highlights primary matches before the cursor."
-  :group 'evil-quick-scope)
-
-(defface evil-qs-backward-secondary
-  '((t (:foreground "blue")))
-  "Highlights secondary matches before the cursor."
-  :group 'evil-quick-scope)
+  :prefix "evil-qs"
+  :group 'Text)
 
 (defcustom evil-qs-highlight-on-keypress nil
   "If not-nil, defines a list of key sequences to active highglighting.
@@ -60,6 +41,31 @@ Fourth item if for `evil-find-char-to-backward`."
   :group 'evil-quick-scope)
 
 (make-variable-buffer-local 'evil-qs-highlight-on-keypress)
+
+(defgroup evil-quick-scope-faces nil
+  "Customise evil-quick-scope faces."
+  :prefix "evil-qs"
+  :group 'evil-quick-scope)
+
+(defface evil-qs-forward-primary
+  '((t (:foreground "green")))
+  "Highlights primary matches after the cursor."
+  :group 'evil-quick-scope-faces)
+
+(defface evil-qs-forward-secondary
+  '((t (:foreground "blue")))
+  "Highlights secondary matches after the cursor."
+  :group 'evil-quick-scope-faces)
+
+(defface evil-qs-backward-primary
+  '((t (:foreground "green")))
+  "Highlights primary matches before the cursor."
+  :group 'evil-quick-scope-faces)
+
+(defface evil-qs-backward-secondary
+  '((t (:foreground "blue")))
+  "Highlights secondary matches before the cursor."
+  :group 'evil-quick-scope-faces)
 
 (defun evil-qs-highlight-forward-primary (positions)
   (dolist (pos positions)
