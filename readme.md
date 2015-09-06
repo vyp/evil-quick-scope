@@ -130,6 +130,30 @@ enabling a globalized minor mode:
 Then blacklist with each mode's hook that you want disabled using the example
 shown above with LaTeX mode.
 
+### Only Highlight After Keypress
+
+If you find keeping the highlighting always on too annoying/intrusive, it may be
+a better option to only enable highlighting after pressing the `f`/`F`/`t`/`T`
+keys:
+
+``` elisp
+(setq-default evil-qs-highlight-on-keypress '("f" "F" "t" "T"))
+```
+
+By default this option is `nil`, hence why highlighting is always on by
+default.
+
+It takes a list of four [key sequences] [8]. The list items correspond to the
+following functionality respectively:
+
+1. `evil-find-char`
+2. `evil-find-char-backward`
+3. `evil-find-char-to`
+4. `evil-find-char-to-backward`
+
+These key sequences are then used to make mappings for the normal, visual,
+operator and motion evil states.
+
 ### Appearance
 
 There are four faces that can be customised to determine the appearance of the
@@ -161,12 +185,6 @@ Should be self-explanatory with the following:
 ## Roadmap
 
 ### Planned
-
-- Option to only turn on highlighting after pressing `f`/`F`/`t`/`T`/`;`/`,`
-  (and to turn off again with the next non-`f`/`F`/`t`/`T`/`;`/`,` movement).
-
-  - If this option is selected, pressing `;`/`,` should only highlight the
-    character that is currently being used by these commands.
 
 - Option to specify an alist to highlight faces at highlighting points according
   to the particular face at that point (instead of using the
@@ -204,3 +222,4 @@ this program in a file named `license` at the root directory. If not, see
 [5]: https://github.com/quelpa/quelpa
 [6]: https://github.com/dimitri/el-get
 [7]: https://github.com/ShingoFukuyama/ov.el
+[8]: http://www.gnu.org/software/emacs/manual/html_node/elisp/Key-Sequences.html

@@ -2,7 +2,7 @@
 ;;
 ;; Copying: GPLv3+
 ;;
-;; Author: <https://github.com/vyp> @xd1le
+;; Author: <https://github.com/vyp>
 ;; Version: 0.1.0
 ;; Created: 15th August 2015
 ;; Keywords: highlight, character, evil, convenience
@@ -10,6 +10,9 @@
 ;; Package-Requires: ((evil "1.2.2") (ov "1.0.6"))
 ;;;
 
+;; TODO: Allow highlight-on-keypress mappings to highlight only forward or
+;; backward depending on direction.
+;;
 ;; TODO: Abort highlighting if before-cursor/after-cursor is too short.
 ;;
 ;; TODO: Instead of just checking for the number of words, check for the number
@@ -47,6 +50,16 @@
   '((t (:foreground "blue")))
   "Highlights secondary matches before the cursor."
   :group 'evil-quick-scope)
+
+(defcustom evil-qs-highlight-on-keypress nil
+  "If not-nil, defines a list of key sequences to active highglighting.
+First item is for `evil-find-char`.
+Second item if for `evil-find-char-backward`.
+Third item if for `evil-find-char-to`.
+Fourth item if for `evil-find-char-to-backward`."
+  :group 'evil-quick-scope)
+
+(make-variable-buffer-local 'evil-qs-highlight-on-keypress)
 
 (defun evil-qs-highlight-forward-primary (positions)
   (dolist (pos positions)
@@ -244,40 +257,98 @@
   (evil-qs-clear)
   (remove-hook 'post-command-hook #'evil-qs-refresh-if-moved-post-command t))
 
+(evil-define-motion evil-qs-find-char (count)
+  :type inclusive
+  (evil-qs-highlight)
+  (unwind-protect
+      (call-interactively 'evil-find-char)
+    (evil-qs-clear)))
+
+(evil-define-motion evil-qs-find-char-backward (count)
+  :type inclusive
+  (evil-qs-highlight)
+  (unwind-protect
+      (call-interactively 'evil-find-char-backward)
+    (evil-qs-clear)))
+
+(evil-define-motion evil-qs-find-char-to (count)
+  :type inclusive
+  (evil-qs-highlight)
+  (unwind-protect
+      (call-interactively 'evil-find-char-to)
+    (evil-qs-clear)))
+
+(evil-define-motion evil-qs-find-char-to-backward (count)
+  :type inclusive
+  (evil-qs-highlight)
+  (unwind-protect
+      (call-interactively 'evil-find-char-to-backward)
+    (evil-qs-clear)))
+
 ;;;###autoload
 (define-minor-mode evil-quick-scope-mode
   "Toggle evil-quick-scope-mode on or off."
 
-  nil " QSC" nil
+  nil " qsc" (make-sparse-keymap)
 
   (if evil-quick-scope-mode
       (progn
-        (let ((orig-state evil-state))
-          (unless (or (eq orig-state 'insert)
-                      (eq orig-state 'replace)
-                      (eq orig-state 'emacs))
+        (if (not (eq evil-qs-highlight-on-keypress nil))
+            (progn
+              (let ((evil-qs-hok-fwd    (nth 0 evil-qs-highlight-on-keypress))
+                    (evil-qs-hok-bwd    (nth 1 evil-qs-highlight-on-keypress))
+                    (evil-qs-hok-fwd-to (nth 2 evil-qs-highlight-on-keypress))
+                    (evil-qs-hok-bwd-to (nth 3 evil-qs-highlight-on-keypress)))
 
-            (evil-qs-start)))
+                (evil-define-key 'normal evil-quick-scope-mode-map
+                  (kbd evil-qs-hok-fwd)    'evil-qs-find-char
+                  (kbd evil-qs-hok-bwd)    'evil-qs-find-char-backward
+                  (kbd evil-qs-hok-fwd-to) 'evil-qs-find-char-to
+                  (kbd evil-qs-hok-bwd-to) 'evil-qs-find-char-to-backward)
 
-        (add-hook 'evil-insert-state-entry-hook #'evil-qs-stop nil t)
+                (evil-define-key 'visual evil-quick-scope-mode-map
+                  (kbd evil-qs-hok-fwd)    'evil-qs-find-char
+                  (kbd evil-qs-hok-bwd)    'evil-qs-find-char-backward
+                  (kbd evil-qs-hok-fwd-to) 'evil-qs-find-char-to
+                  (kbd evil-qs-hok-bwd-to) 'evil-qs-find-char-to-backward)
 
-        ;; In case cursor does not actually change position.
-        ;;
-        ;; For example, if user enters insert state at the beginning of a line, and
-        ;; exits it at the same place, the cursor does not move one position back as
-        ;; usual (even if `evil-cross-lines` is set to true).
-        (add-hook 'evil-insert-state-exit-hook #'evil-qs-highlight nil t)
+                (evil-define-key 'operator evil-quick-scope-mode-map
+                  (kbd evil-qs-hok-fwd)    'evil-qs-find-char
+                  (kbd evil-qs-hok-bwd)    'evil-qs-find-char-backward
+                  (kbd evil-qs-hok-fwd-to) 'evil-qs-find-char-to
+                  (kbd evil-qs-hok-bwd-to) 'evil-qs-find-char-to-backward)
 
-        (add-hook 'evil-insert-state-exit-hook #'evil-qs-start nil t)
+                (evil-define-key 'motion evil-quick-scope-mode-map
+                  (kbd evil-qs-hok-fwd)    'evil-qs-find-char
+                  (kbd evil-qs-hok-bwd)    'evil-qs-find-char-backward
+                  (kbd evil-qs-hok-fwd-to) 'evil-qs-find-char-to
+                  (kbd evil-qs-hok-bwd-to) 'evil-qs-find-char-to-backward)))
 
-        (add-hook 'evil-replace-state-entry-hook #'evil-qs-stop nil t)
-        (add-hook 'evil-replace-state-exit-hook #'evil-qs-highlight nil t)
-        (add-hook 'evil-replace-state-exit-hook #'evil-qs-start nil t)
+          (let ((orig-state evil-state))
+            (unless (or (eq orig-state 'insert)
+                        (eq orig-state 'replace)
+                        (eq orig-state 'emacs))
 
-        (add-hook 'evil-emacs-state-entry-hook #'evil-qs-stop nil t)
-        (add-hook 'evil-emacs-state-exit-hook #'evil-qs-highlight nil t)
-        (add-hook 'evil-emacs-state-exit-hook #'evil-qs-start nil t)
-        (add-hook 'minibuffer-setup-hook (lambda () (evil-quick-scope-mode -1))))
+              (evil-qs-start)))
+
+          (add-hook 'evil-insert-state-entry-hook #'evil-qs-stop nil t)
+          ;; In case cursor does not actually change position.
+          ;;
+          ;; For example, if user enters insert state at the beginning of a
+          ;; line, and exits it at the same place, the cursor does not move one
+          ;; position back as usual (even if `evil-cross-lines` is set to true).
+          (add-hook 'evil-insert-state-exit-hook #'evil-qs-highlight nil t)
+          (add-hook 'evil-insert-state-exit-hook #'evil-qs-start nil t)
+
+          (add-hook 'evil-replace-state-entry-hook #'evil-qs-stop nil t)
+          (add-hook 'evil-replace-state-exit-hook #'evil-qs-highlight nil t)
+          (add-hook 'evil-replace-state-exit-hook #'evil-qs-start nil t)
+
+          (add-hook 'evil-emacs-state-entry-hook #'evil-qs-stop nil t)
+          (add-hook 'evil-emacs-state-exit-hook #'evil-qs-highlight nil t)
+          (add-hook 'evil-emacs-state-exit-hook #'evil-qs-start nil t)
+
+          (add-hook 'minibuffer-setup-hook (lambda () (evil-quick-scope-mode -1)))))
 
     (remove-hook 'evil-insert-state-entry-hook #'evil-qs-stop t)
     (remove-hook 'evil-insert-state-exit-hook #'evil-qs-highlight t)
