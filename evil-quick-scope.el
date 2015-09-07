@@ -10,9 +10,6 @@
 ;; Package-Requires: ((evil "1.2.2") (ov "1.0.6"))
 ;;;
 
-;; TODO: Allow highlight-on-keypress mappings to highlight only forward or
-;; backward depending on direction.
-;;
 ;; TODO: Abort highlighting if before-cursor/after-cursor is too short.
 ;;
 ;; TODO: Instead of just checking for the number of words, check for the number
@@ -83,7 +80,7 @@ Fourth item if for `evil-find-char-to-backward`."
   (dolist (pos positions)
     (ov pos (+ 1 pos) 'face 'evil-qs-backward-secondary 'evil-qs-bwd-sec t)))
 
-(defun evil-qs-highlight ()
+(defun evil-qs-highlight (&optional direction)
   (unless (< (length (split-string (thing-at-point 'line) "[-_\/. \f\t\n\r\v]+")) 3)
     (let ((accepted-chars '(("a" . 0) ("n" . 0) ("A" . 0) ("N" . 0) ("0" . 0)
                             ("b" . 0) ("o" . 0) ("B" . 0) ("O" . 0) ("1" . 0)
@@ -126,118 +123,120 @@ Fourth item if for `evil-find-char-to-backward`."
         (setq current-char-accepted-p
               (cdr (assoc (string current-char) occurrences))))
 
-      (let ((pos cursor)
-            (accepted)
+      (unless (equal direction "backward")
+        (let ((pos cursor)
+              (accepted)
 
-            (first-word t)
-            (first-char (if current-char-accepted-p t nil))
+              (first-word t)
+              (first-char (if current-char-accepted-p t nil))
 
-            (found-pri-char nil)
-            (found-sec-char nil)
+              (found-pri-char nil)
+              (found-sec-char nil)
 
-            (pri-chars-to-hl '())
-            (sec-chars-to-hl '())
-            (pri-to-hl)
-            (sec-to-hl)
+              (pri-chars-to-hl '())
+              (sec-chars-to-hl '())
+              (pri-to-hl)
+              (sec-to-hl)
 
-            (after-cursor (split-string after-cursor-string word-seps-reg)))
+              (after-cursor (split-string after-cursor-string word-seps-reg)))
 
-        (dolist (word after-cursor)
-          (setq found-pri-char nil
-                found-sec-char nil)
+          (dolist (word after-cursor)
+            (setq found-pri-char nil
+                  found-sec-char nil)
 
-          (dolist (char (append word nil))
-            (unless (eq first-char t)
-              (setq char (string char)
+            (dolist (char (append word nil))
+              (unless (eq first-char t)
+                (setq char (string char)
+                      accepted (cdr (assoc char occurrences)))
+
+                (unless (eq accepted nil)
+                  (add-to-list 'occurrences `(,char . ,(+ 1 accepted)))
+
+                  (unless (or (eq found-pri-char t) (eq found-sec-char t))
+                    (unless (eq first-word t)
+                      (if (eq 0 accepted)
+                          (progn
+                            (setq pri-to-hl (+ beg pos)
+                                  found-pri-char t))
+
+                        (if (eq 1 accepted)
+                            (progn
+                              (setq sec-to-hl (+ beg pos)
+                                    found-sec-char t))))))))
+
+              (if (eq first-char t)
+                  (setq first-char nil))
+
+              (setq pos (+ pos 1)))
+
+            (if (eq found-pri-char t)
+                (setq pri-chars-to-hl (append pri-chars-to-hl (list pri-to-hl)))
+
+              (if (eq found-sec-char t)
+                  (setq sec-chars-to-hl (append sec-chars-to-hl (list sec-to-hl)))))
+
+            (if (eq first-word t)
+                (setq first-word nil))
+
+            (setq pos (+ pos 1)))
+
+          (evil-qs-highlight-forward-primary pri-chars-to-hl)
+          (evil-qs-highlight-forward-secondary sec-chars-to-hl))
+
+        ;; Reset occurrences in case we need to highlight backwards too.
+        (setq occurrences accepted-chars))
+
+      (unless (equal direction "forward")
+        (let ((pos cursor)
+              (accepted)
+
+              (first-word (if current-char-accepted-p t nil))
+              (found-pri-char nil)
+              (found-sec-char nil)
+
+              (pri-chars-to-hl '())
+              (sec-chars-to-hl '())
+              (pri-to-hl)
+              (sec-to-hl)
+
+              (before-cursor (split-string before-cursor-string word-seps-reg)))
+
+          (dolist (word (reverse before-cursor))
+            (setq found-pri-char nil
+                  found-sec-char nil)
+
+            (dolist (char (reverse (append word nil)))
+              (setq pos (- pos 1)
+                    char (string char)
                     accepted (cdr (assoc char occurrences)))
 
               (unless (eq accepted nil)
                 (add-to-list 'occurrences `(,char . ,(+ 1 accepted)))
 
-                (unless (or (eq found-pri-char t) (eq found-sec-char t))
-                  (unless (eq first-word t)
-                    (if (eq 0 accepted)
-                        (progn
-                          (setq pri-to-hl (+ beg pos)
-                                found-pri-char t))
-
-                      (if (eq 1 accepted)
-                          (progn
-                            (setq sec-to-hl (+ beg pos)
-                                  found-sec-char t))))))))
-
-            (if (eq first-char t)
-                (setq first-char nil))
-
-            (setq pos (+ pos 1)))
-
-          (if (eq found-pri-char t)
-              (setq pri-chars-to-hl (append pri-chars-to-hl (list pri-to-hl)))
-
-            (if (eq found-sec-char t)
-                (setq sec-chars-to-hl (append sec-chars-to-hl (list sec-to-hl)))))
-
-          (if (eq first-word t)
-              (setq first-word nil))
-
-          (setq pos (+ pos 1)))
-
-        (evil-qs-highlight-forward-primary pri-chars-to-hl)
-        (evil-qs-highlight-forward-secondary sec-chars-to-hl))
-
-      ;; Reset occurrences because now we are counting in a different direction.
-      (setq occurrences accepted-chars)
-
-      (let ((pos cursor)
-            (accepted)
-
-            (first-word (if current-char-accepted-p t nil))
-            (found-pri-char nil)
-            (found-sec-char nil)
-
-            (pri-chars-to-hl '())
-            (sec-chars-to-hl '())
-            (pri-to-hl)
-            (sec-to-hl)
-
-            (before-cursor (split-string before-cursor-string word-seps-reg)))
-
-        (dolist (word (reverse before-cursor))
-          (setq found-pri-char nil
-                found-sec-char nil)
-
-          (dolist (char (reverse (append word nil)))
-            (setq pos (- pos 1)
-                  char (string char)
-                  accepted (cdr (assoc char occurrences)))
-
-            (unless (eq accepted nil)
-              (add-to-list 'occurrences `(,char . ,(+ 1 accepted)))
-
-              (unless (eq first-word t)
-                (if (eq 0 accepted)
-                    (progn
-                      (setq pri-to-hl (+ beg pos)
-                            found-pri-char t))
-
-                  (if (eq 1 accepted)
+                (unless (eq first-word t)
+                  (if (eq 0 accepted)
                       (progn
-                        (setq sec-to-hl (+ beg pos)
-                              found-sec-char t)))))))
+                        (setq pri-to-hl (+ beg pos)
+                              found-pri-char t))
 
-          (if (eq found-pri-char t)
-              (setq pri-chars-to-hl (append pri-chars-to-hl (list pri-to-hl)))
+                    (if (eq 1 accepted)
+                        (progn
+                          (setq sec-to-hl (+ beg pos)
+                                found-sec-char t)))))))
 
-            (if (eq found-sec-char t)
-                (setq sec-chars-to-hl (append sec-chars-to-hl (list sec-to-hl)))))
+            (if (eq found-pri-char t)
+                (setq pri-chars-to-hl (append pri-chars-to-hl (list pri-to-hl)))
 
-          (if (eq first-word t)
-              (setq first-word nil))
+              (if (eq found-sec-char t)
+                  (setq sec-chars-to-hl (append sec-chars-to-hl (list sec-to-hl)))))
 
-          (setq pos (- pos 1)))
+            (if (eq first-word t)
+                (setq first-word nil))
 
-        (evil-qs-highlight-backward-primary pri-chars-to-hl)
-        (evil-qs-highlight-backward-secondary sec-chars-to-hl)))))
+            (setq pos (- pos 1)))
+
+          (evil-qs-highlight-backward-primary pri-chars-to-hl)
+          (evil-qs-highlight-backward-secondary sec-chars-to-hl))))))
 
 (defun evil-qs-clear ()
   (ov-clear 'evil-qs-fwd-pri)
@@ -265,28 +264,28 @@ Fourth item if for `evil-find-char-to-backward`."
 
 (evil-define-motion evil-qs-find-char (count)
   :type inclusive
-  (evil-qs-highlight)
+  (evil-qs-highlight "forward")
   (unwind-protect
       (call-interactively 'evil-find-char)
     (evil-qs-clear)))
 
 (evil-define-motion evil-qs-find-char-backward (count)
   :type inclusive
-  (evil-qs-highlight)
+  (evil-qs-highlight "backward")
   (unwind-protect
       (call-interactively 'evil-find-char-backward)
     (evil-qs-clear)))
 
 (evil-define-motion evil-qs-find-char-to (count)
   :type inclusive
-  (evil-qs-highlight)
+  (evil-qs-highlight "forward")
   (unwind-protect
       (call-interactively 'evil-find-char-to)
     (evil-qs-clear)))
 
 (evil-define-motion evil-qs-find-char-to-backward (count)
   :type inclusive
-  (evil-qs-highlight)
+  (evil-qs-highlight "backward")
   (unwind-protect
       (call-interactively 'evil-find-char-to-backward)
     (evil-qs-clear)))
