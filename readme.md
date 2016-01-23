@@ -58,29 +58,13 @@ call them.
 
 ## Installation
 
-### [Quelpa] [5] (recommended)
+Using [Quelpa] [5]:
 
 ``` elisp
 (quelpa
  '(evil-quick-scope
-   :fetcher github
-   :repo "vyp/evil-quick-scope"))
-```
-
-### [El-Get] [6]
-
-``` elisp
-(el-get-bundle vyp/evil-quick-scope)
-```
-
-### Manually
-
-Make sure that the dependencies evil and [ov] [7] are installed, and then in
-`.emacs` or `init.el`:
-
-``` elisp
-(add-to-list 'load-path "~/path/to/evil-quick-scope/")
-(load "evil-quick-scope")
+   :fetcher gitlab
+   :repo "fi/evil-quick-scope"))
 ```
 
 ## Configuration
@@ -143,7 +127,7 @@ keys:
 By default this option is `nil`, hence why highlighting is always on by
 default.
 
-It takes a list of four [key sequences] [8]. The list items correspond to the
+It takes a list of four [key sequences] [6]. The list items correspond to the
 following functionality respectively:
 
 1. `evil-find-char`
@@ -220,6 +204,4 @@ this program in a file named `license` at the root directory. If not, see
 [3]: https://github.com/unblevable/quick-scope
 [4]: https://bitbucket.org/lyro/evil
 [5]: https://github.com/quelpa/quelpa
-[6]: https://github.com/dimitri/el-get
-[7]: https://github.com/ShingoFukuyama/ov.el
-[8]: http://www.gnu.org/software/emacs/manual/html_node/elisp/Key-Sequences.html
+[6]: http://www.gnu.org/software/emacs/manual/html_node/elisp/Key-Sequences.html
