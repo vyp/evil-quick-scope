@@ -1,12 +1,10 @@
 ;;; evil-quick-scope.el --- Lightning fast f/F/t/T movement for Evil mode.
 ;;
-;; Copying: GPLv3+
-;;
-;; Author: <https://github.com/vyp>
+;; Author: xd1le
 ;; Version: 0.1.0
 ;; Created: 15th August 2015
 ;; Keywords: highlight, character, evil, convenience
-;; URL: https://github.com/vyp/evil-quick-scope
+;; URL: https://gitlab.com/fi/evil-quick-scope
 ;; Package-Requires: ((evil "1.2.2") (ov "1.0.6"))
 ;;;
 

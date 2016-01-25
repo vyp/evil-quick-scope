@@ -196,8 +196,8 @@ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with
-this program in a file named `license` at the root directory. If not, see
-<http://www.gnu.org/licenses/>.
+this program as a file named `license` in the root of this repository. If not,
+see <http://www.gnu.org/licenses/>.
 
 [1]: https://github.com/blorbx/evil-quickscope
 [2]: https://plus.google.com/102336503306134343850
