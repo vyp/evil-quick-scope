@@ -8,8 +8,9 @@
 ;; Package-Requires: ((evil "1.2.2") (ov "1.0.6"))
 ;;;
 
+;; TODO: Add a proper comment header, complete with documentation and license
+;; boilerplate.
 ;; TODO: Abort highlighting if before-cursor/after-cursor is too short.
-;;
 ;; TODO: Instead of just checking for the number of words, check for the number
 ;; of words *with accepted characters in them*, to determine when to start
 ;; highlighting on the line.
