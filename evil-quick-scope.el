@@ -179,7 +179,7 @@
   :group 'Text)
 
 (defcustom evil-qs-highlight-on-keypress nil
-  "If not-nil, defines a list of key sequences to active highglighting.
+  "If not-nil, defines a list of key sequences to active highlighting.
 First item is for `evil-find-char`.
 Second item if for `evil-find-char-backward`.
 Third item if for `evil-find-char-to`.
