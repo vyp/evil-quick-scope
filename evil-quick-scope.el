@@ -1,9 +1,5 @@
 ;;; evil-quick-scope.el --- Lightning fast f/F/t/T movement for Evil mode.
 
-;; Copyright (C) 2016 by xd1le
-
-;; Author: xd1le
-;; Maintainer: xd1le
 ;; Version: 0.1.0
 ;; Created: 15th August 2015
 ;; Keywords: highlight, character, evil, convenience
